@@ -1,0 +1,291 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b6d86794-0a66-49c4-a6c6-459ed4ea319e",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        260,
+        360
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.paginated_url }}",
+        "options": {}
+      },
+      "id": "81e75943-9f72-49ac-9e40-ca7b9a7e1f2f",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1180,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "import re\n\n# Get the input data from the previous node\ninput_data = items[0]['json']\n# The 'data' field is a string containing the HTTP response\ndata_string = input_data.get('data', '')\n\n# Use a regular expression to extract all LinkedIn job URLs\npattern = r'linkedin\\.com/jobs/view/\\S+'\n\n# Extract all URLs that match the LinkedIn job URL pattern\nurls = re.findall(pattern, data_string)\n\n# Function to clean the URL by removing everything after '&' or '#'\ndef clean_url(url):\n    return url.split('&')[0].split('#')[0]\n\n# Prepare the result, where each URL is cleaned and has a unique name like 'item0', 'item1', etc.\noutput_data = [{\"json\": {f\"item{index}\": clean_url(url)}} for index, url in enumerate(urls)]\n\n# Limit the results to 'results_number'\nresults_number = items[1]['json'].get('results_number', 3)  # Default to 3 if not provided\noutput_data = output_data[:results_number]\n# results_number=_('limit results number').get('results_number', '')\n# data_node2 = _('limit results number')  # Replace with the correct node name\n# results_number = data_node2.get('results_number', '')\n# results_number=_('limit results number').get('results_number', '')\n\n# print(f\"results_number: {results_number}\")\n\n# Return the result\nreturn output_data\n"
+      },
+      "id": "1429f234-e092-447a-83c3-cd6380c2d0ac",
+      "name": "Code1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2c45e44c-6334-41be-95d0-b8ff6c9b7bc3",
+              "name": "results_number",
+              "value": 5,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d97f8cce-09ac-491d-9aa3-bd98dceea0a2",
+      "name": "limit results number",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1180,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "29c4da92-77dd-4087-87d5-fa514a096ac8",
+              "name": "link_old",
+              "value": "https://www.google.com.br/search?q=site%3Alinkedin.com%2Fjobs%2F+%28%22Physical+design%22+OR+%22Digital+IC+Designer%22+OR+%22Back-end+IC+Designer%22+OR+%22Physical+Implementation%22+OR+%22ASIC%22+OR+%22VLSI%22%29+%28%22remote%22%29+%28%22Synopsys%22+OR+%22Cadence%22+OR+%22RTL%22+OR+%22Floorplanning%22+OR+%22STA%22+OR+%22Chip+Design%22%29+after%3A2024-08-01+%28Junior+OR+%22Entry+Level%22+OR+Associate+OR+%220-2+years%22+OR+%221-2+years%22%29+-%22Senior%22+-%22Lead%22+-%22Manager%22+-%228%2B+years%22+-%2210%2B+years%22+-%225%2B+years%22+-%226%2B+years%22+-%227%2B+years%22+-%22Principal%22&num=10&sca_esv=ab2746a6ddac7fed&sca_upv=1&sxsrf=ADLYWIIoI24yGBF8iCBq6xIrT3-BrDE8jQ%3A1725126873007&ei=2VjTZoEK693WxA_JgsjBBQ&ved=0ahUKEwjB2tSz5p-IAxXrrpUCHUkBMlgQ4dUDCBE&uact=5&oq=site%3Alinkedin.com%2Fjobs%2F+%28%22Physical+design%22+OR+%22Digital+IC+Designer%22+OR+%22Back-end+IC+Designer%22+OR+%22Physical+Implementation%22+OR+%22ASIC%22+OR+%22VLSI%22%29+%28%22remote%22%29+%28%22Synopsys%22+OR+%22Cadence%22+OR+%22RTL%22+OR+%22Floorplanning%22+OR+%22STA%22+OR+%22Chip+Design%22%29+after%3A2024-08-01+%28Junior+OR+%22Entry+Level%22+OR+Associate+OR+%220-2+years%22+OR+%221-2+years%22%29+-%22Senior%22+-%22Lead%22+-%22Manager%22+-%228%2B+years%22+-%2210%2B+years%22+-%225%2B+years%22+-%226%2B+years%22+-%227%2B+years%22+-%22Principal%22&gs_lp=Egxnd3Mtd2l6LXNlcnAipwNzaXRlOmxpbmtlZGluLmNvbS9qb2JzLyAoIlBoeXNpY2FsIGRlc2lnbiIgT1IgIkRpZ2l0YWwgSUMgRGVzaWduZXIiIE9SICJCYWNrLWVuZCBJQyBEZXNpZ25lciIgT1IgIlBoeXNpY2FsIEltcGxlbWVudGF0aW9uIiBPUiAiQVNJQyIgT1IgIlZMU0kiKSAoInJlbW90ZSIpICgiU3lub3BzeXMiIE9SICJDYWRlbmNlIiBPUiAiUlRMIiBPUiAiRmxvb3JwbGFubmluZyIgT1IgIlNUQSIgT1IgIkNoaXAgRGVzaWduIikgYWZ0ZXI6MjAyNC0wOC0wMSAoSnVuaW9yIE9SICJFbnRyeSBMZXZlbCIgT1IgQXNzb2NpYXRlIE9SICIwLTIgeWVhcnMiIE9SICIxLTIgeWVhcnMiKSAtIlNlbmlvciIgLSJMZWFkIiAtIk1hbmFnZXIiIC0iOCsgeWVhcnMiIC0iMTArIHllYXJzIiAtIjUrIHllYXJzIiAtIjYrIHllYXJzIiAtIjcrIHllYXJzIiAtIlByaW5jaXBhbCJIAFAAWABwAHgAkAEAmAEAoAEAqgEAuAEDyAEA-AEC-AEBmAIAoAIAmAMAkgcAoAcA&sclient=gws-wiz-serp",
+              "type": "string"
+            },
+            {
+              "id": "d7ad58a7-8d4e-4e71-863c-430f148ae82d",
+              "name": "page",
+              "value": 2,
+              "type": "number"
+            },
+            {
+              "id": "c7a863b4-19d1-4d1b-bcb1-f4c9e5ebbd85",
+              "name": "num_results",
+              "value": 10,
+              "type": "number"
+            },
+            {
+              "id": "a1deffd6-69e9-4c3d-8d3e-af574b3a8ac0",
+              "name": "link",
+              "value": "={{ $json.search_url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "58549637-a01c-4305-9ed8-3ff216ac97eb",
+      "name": "edit URL",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        760,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.search_url }}",
+        "options": {}
+      },
+      "id": "821c21b6-29d1-4038-922c-fce92c967a37",
+      "name": "HTTP Request1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        620,
+        60
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "9814f106-7681-4bf9-8b18-7f4f99fa1066",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        1480,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "import urllib.parse\n\n# Get the input data from the previous node\ninput_data = items[0]['json']\n# The 'data' field is a string containing the HTTP response\nsearch_query = input_data.get('search', '')\n\n# Base Google search URL\nbase_url = \"https://www.google.com/search?q=\"\n\n# URL encode the search query\nencoded_query = urllib.parse.quote(search_query)\n\n# Combine the base URL and the encoded query\nfinal_url = f\"{base_url}{encoded_query}\"\n\n# Output the final Google search URL\nreturn [{\"json\": {\"search_url\": final_url}}]"
+      },
+      "id": "fab6845c-16fa-4e86-8bfc-162315deb1ff",
+      "name": "define_url_search",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        600,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "# Input data (assuming it's passed as the first item in the items array)\ninput_data = items[0]['json']\n\n# Base URL and page number from input\nbase_url = input_data['link']\npage = input_data['page']\nnum_results = input_data['num_results']\n\n# Calculate the start value for pagination\nstart_value = (page - 1) * 10\n\n# Generate the paginated URL\npaginated_url = f\"{base_url}&start={start_value}\"\npaginated_url = f\"{base_url}&enum={num_results}\"\n\n# Return the new paginated URL\nreturn [{\"json\": {\"paginated_url\": paginated_url}}]\n"
+      },
+      "id": "ce1a5506-9df5-4417-b29e-c473d89ef0bf",
+      "name": "paginated_url",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5fe35764-65dc-4ca0-9bb1-3c17381280dd",
+              "name": "search",
+              "value": "site:linkedin.com/jobs/ (\"Physical design\" OR \"Digital IC Designer\" OR \"Back-end IC Designer\" OR \"Physical Implementation\" OR \"ASIC\" OR \"VLSI\") (\"remote\") (\"Synopsys\" OR \"Cadence\" OR \"RTL\" OR \"Floorplanning\" OR \"STA\" OR \"Chip Design\") after:2024-08-01 (Junior OR \"Entry Level\" OR Associate OR \"0-2 years\" OR \"1-2 years\") -\"Senior\" -\"Lead\" -\"Manager\" -\"8+ years\" -\"10+ years\" -\"5+ years\" -\"6+ years\" -\"7+ years\" -\"Principal\"",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6b56bbab-9e7c-459a-9d36-48e937d86e87",
+      "name": "Search field",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        220
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Search field",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "limit results number",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "edit URL": {
+      "main": [
+        [
+          {
+            "node": "paginated_url",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "limit results number": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "define_url_search": {
+      "main": [
+        [
+          {
+            "node": "edit URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "paginated_url": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search field": {
+      "main": [
+        [
+          {
+            "node": "define_url_search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "521df9d1-8b44-460b-91ef-6ac18b66afb8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "287dc9af240ea326aab4d3424ede404e5e6b862e46f18a12b90585539700e14e"
+  },
+  "id": "uVEVcpKynSd0iuRd",
+  "tags": []
+}
