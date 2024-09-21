@@ -179,6 +179,20 @@
         440,
         220
       ]
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "import langchain_groq\nfrom langchain_groq import ChatGroq\n\n# Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor item in _input.all():\n  item.json.myNewField = 1\nreturn _input.all()\n\n"
+      },
+      "id": "78efa2f9-191a-4df0-b1e3-699e22f620b5",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        540,
+        620
+      ]
     }
   ],
   "pinData": {},
@@ -281,7 +295,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "521df9d1-8b44-460b-91ef-6ac18b66afb8",
+  "versionId": "55be2f56-11b2-4ad0-bf9d-f7529a01fbe8",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "287dc9af240ea326aab4d3424ede404e5e6b862e46f18a12b90585539700e14e"
