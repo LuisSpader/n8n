@@ -190,9 +190,84 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        540,
-        620
+        580,
+        600
       ]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {
+          "responseFormat": "text"
+        }
+      },
+      "id": "cea915ca-ab0f-47ac-a84a-5dfa0f7739ed",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -300,
+        540
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "rXU1nCl96WSRycyY",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 30
+      },
+      "id": "911d6fb9-eb0b-4fc5-810a-a6f80d4e9aa8",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        -180,
+        560
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "62ba1d6c-1600-41d5-ad44-65d371e6168e",
+      "name": "Calculator",
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "ea4c2f7a-519a-4d2a-8f7a-a4a500fdbbec",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -480,
+        340
+      ],
+      "webhookId": "e8b2b1c0-44b7-43a5-b789-145305f19bb5"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "options": {}
+      },
+      "id": "8fc58cc1-524c-4f0d-a003-f0ff57b78e30",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        -220,
+        340
+      ],
+      "notes": "Você é um agente AI que encontra empregos (seu nome é Smith). Sua função é recolher dados da carreira usuário como experiência, área de atuação desejada, ferramentas que sabe utilizar, projetos feitos e em andamento, etc (o que você achar necessário para montar um termo de pesquisa do linkedin) e ao final montar um texto de busca Google para encontrar links de empregos no LinkeIn. \nPor exemplo, digamos que você já coletou informações do usuário como:\n1- área de atuação. Após coletar você irá pesquisar termos relacionados e irá me perguntar se estes termos realmente estão relacionados, caso positivo, você salva na memória. -> Suponha que o usuário respondeu 'projetista de hardware', após perguntar ao usuário mais detalhes, você descobriu que ele é projetista de hardware VLSI, e buscando na sua base de dados, você descobre que isso pode ser conhecido como digital IC designer Back-end.\n2- Anos de experiência: pergunte ao usuário quantos anos de experiência na indústria (mercado de trabalho) ele possui. -> Suponha que o usuário respondeu 5 anos.\n3- Tipos de vaga desejadas: presencial e/ou híbrido e/ou remoto -> Suponha que o usuário respondeu apenas remoto\n4- intervalo de data. -> Suponha que o usuário respondeu a partir de Agosto.\nNeste caso um possível termo de pesquisa seria:\nsite:linkedin.com/jobs/ (\"Physical design\" OR \"Digital IC Designer\" OR \"Back-end IC Designer\" OR \"Physical Implementation\" OR \"ASIC\" OR \"VLSI\") (\"remote\") (\"Synopsys\" OR \"Cadence\" OR \"RTL\" OR \"Floorplanning\" OR \"STA\" OR \"Chip Design\") after:2024-08-01 (Junior OR \"Entry Level\" OR Associate) -\"6+ years\" -\"7+ years\" -\"8+ years\" -\"9+ years\" -\"10+ years\" -\"11+ years\""
     }
   ],
   "pinData": {},
@@ -289,13 +364,57 @@
           }
         ]
       ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "55be2f56-11b2-4ad0-bf9d-f7529a01fbe8",
+  "versionId": "fa15bab4-6fe6-4fec-9f58-5b8656f16859",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "287dc9af240ea326aab4d3424ede404e5e6b862e46f18a12b90585539700e14e"
